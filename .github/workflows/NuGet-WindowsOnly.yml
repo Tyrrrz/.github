@@ -4,7 +4,7 @@ on:
       dotnet-version:
         required: false
         type: string
-        default: 6.0.x      
+        default: 6.0.x
       
     secrets:
       CODECOV_TOKEN:
