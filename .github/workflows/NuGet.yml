@@ -6,6 +6,10 @@ on:
         required: false
         type: string
         default: 6.0.x
+      publish-on-failed-tests:
+        required: false
+        type: boolean
+        default: false
 
     secrets:
       CODECOV_TOKEN:
@@ -48,7 +52,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   publish:
-    if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
+    if: ${{ github.event_name == 'push' && github.ref_type == 'tag' && (success() || inputs.publish-on-failed-tests) }}
     needs: test
     runs-on: windows-latest
 
