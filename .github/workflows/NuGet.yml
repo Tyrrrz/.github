@@ -15,7 +15,7 @@ on:
       DISCORD_WEBHOOK:
         required: false
 
-job:
+jobs:
   test:
     runs-on: ${{ matrix.os }}
 
