@@ -1,4 +1,3 @@
-
 on:
   workflow_call:
     inputs:
@@ -43,7 +42,7 @@ jobs:
           dotnet-version: ${{ inputs.dotnet-version }}
 
       - name: Run tests
-        run: dotnet test --configuration Release --logger "GitHubActions;report-warnings=false"
+        run: dotnet test --configuration Release --logger "GitHubActions;report-warnings=false" --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
       - name: Upload coverage
         if: ${{ env.CODECOV_TOKEN }}
