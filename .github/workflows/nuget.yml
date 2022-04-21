@@ -31,6 +31,7 @@ jobs:
       TERM: xterm
       DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION: true
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+      DOTNET_NOLOGO: true
       DOTNET_CLI_TELEMETRY_OPTOUT: true
       # Secrets can't be referenced in conditionals, but environment variables can.
       # https://github.com/github/docs/issues/6861#issuecomment-870757186
@@ -78,6 +79,7 @@ jobs:
       TERM: xterm
       DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION: true
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+      DOTNET_NOLOGO: true
       DOTNET_CLI_TELEMETRY_OPTOUT: true
       # Secrets can't be referenced in conditionals, but environment variables can.
       # https://github.com/github/docs/issues/6861#issuecomment-870757186
