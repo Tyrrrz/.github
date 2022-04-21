@@ -28,8 +28,10 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     env:
-      DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION: 1
       TERM: xterm
+      DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION: true
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
       # Secrets can't be referenced in conditionals, but environment variables can.
       # https://github.com/github/docs/issues/6861#issuecomment-870757186
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
@@ -73,8 +75,10 @@ jobs:
     runs-on: windows-latest
 
     env:
-      DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION: 1
       TERM: xterm
+      DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION: true
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
       # Secrets can't be referenced in conditionals, but environment variables can.
       # https://github.com/github/docs/issues/6861#issuecomment-870757186
       DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
