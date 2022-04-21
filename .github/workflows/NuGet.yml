@@ -1,13 +1,16 @@
 on:
   workflow_call:
     inputs:
-      dotnet-version:
-        required: false
-        type: string
-        default: 6.0.x
-      publish-on-failed-tests:
-        required: false
+      windows-only:
         type: boolean
+        required: false
+        default: false
+      dotnet-version:
+        type: string
+        required: true
+      publish-on-failed-tests:
+        type: boolean
+        required: false
         default: false
 
     secrets:
@@ -20,33 +23,37 @@ on:
 
 jobs:
   test:
+    if: ${{ !inputs.windows-only || startsWith(matrix.os, 'windows') }}
     runs-on: ${{ matrix.os }}
+
+    env:
+      DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION: 1
+      TERM: xterm
+      # Secrets can't be referenced in conditionals, but environment variables can.
+      # https://github.com/github/docs/issues/6861#issuecomment-870757186
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
     strategy:
       fail-fast: false
+      max-parallel: 3
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
-    # Secrets can't be referenced in conditionals, but environment variables can.
-    # Workaround for https://github.com/github/docs/pull/12722
-    env:
-      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-
     steps:
       - name: Checkout
-        uses: actions/checkout@v2.3.3
+        uses: actions/checkout@v3
 
       - name: Install .NET
-        uses: actions/setup-dotnet@v1.7.2
+        uses: actions/setup-dotnet@v2
         with:
           dotnet-version: ${{ inputs.dotnet-version }}
 
       - name: Run tests
-        run: dotnet test --configuration Release --logger "GitHubActions;report-warnings=false" --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+        run: dotnet test --configuration Release --logger GitHubActions --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
       - name: Upload coverage
         if: ${{ env.CODECOV_TOKEN }}
-        uses: codecov/codecov-action@v1.0.5
+        uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -55,21 +62,23 @@ jobs:
     needs: test
     runs-on: windows-latest
 
-    # Secrets can't be referenced in conditionals, but environment variables can.
-    # Workaround for https://github.com/github/docs/pull/12722
     env:
+      DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION: 1
+      TERM: xterm
+      # Secrets can't be referenced in conditionals, but environment variables can.
+      # https://github.com/github/docs/issues/6861#issuecomment-870757186
       DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2.3.3
+        uses: actions/checkout@v3
 
       - name: Get release version
         id: get-version
         uses: dawidd6/action-get-tag@v1
 
       - name: Install .NET
-        uses: actions/setup-dotnet@v1.7.2
+        uses: actions/setup-dotnet@v2
         with:
           dotnet-version: ${{ inputs.dotnet-version }}
 
