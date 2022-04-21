@@ -23,7 +23,7 @@ on:
 
 jobs:
   test:
-    if: ${{ !inputs.windows-only || startsWith(matrix.os, 'windows') }}
+    if: ${{ !inputs.windows-only || runner.os == 'Windows' }}
     runs-on: ${{ matrix.os }}
 
     env:
