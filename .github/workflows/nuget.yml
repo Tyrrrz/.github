@@ -69,10 +69,8 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-  deploy:
-    if: ${{ github.event_name == 'push' && github.ref_type == 'tag' && (success() || inputs.deploy-on-failed-tests) }}
+  publish:
     needs: test
-    # Runs on Windows to be compatible with Windows-only projects without additional conditions
     runs-on: windows-latest
 
     env:
@@ -81,9 +79,6 @@ jobs:
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
       DOTNET_NOLOGO: true
       DOTNET_CLI_TELEMETRY_OPTOUT: true
-      # Secrets can't be referenced in conditionals, but environment variables can.
-      # https://github.com/github/docs/issues/6861#issuecomment-870757186
-      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
 
     steps:
       - name: Checkout
@@ -97,17 +92,41 @@ jobs:
       - name: Create packages
         run: dotnet pack --configuration Release
 
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: packages
+          path: "**/*.nupkg"
+
+  deploy:
+    if: ${{ github.event_name == 'push' && github.ref_type == 'tag' && (success() || inputs.deploy-on-failed-tests) }}
+    needs: publish
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: ${{ inputs.dotnet-version }}
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: packages
+
       - name: Push packages
-        run: dotnet nuget push **\*.nupkg -s nuget.org -k ${{ secrets.NUGET_TOKEN }}
+        run: dotnet nuget push **\*.nupkg -k ${{ secrets.NUGET_TOKEN }}
 
   notify:
     needs: deploy
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+    env:
+      # Secrets can't be referenced in conditionals, but environment variables can.
+      # https://github.com/github/docs/issues/6861#issuecomment-870757186
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
 
+    steps:
       - name: Get release version
         id: get-version
         uses: dawidd6/action-get-tag@v1
