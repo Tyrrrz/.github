@@ -23,7 +23,6 @@ on:
 
 jobs:
   test:
-    if: ${{ !inputs.windows-only || runner.os == 'Windows' }}
     runs-on: ${{ matrix.os }}
 
     env:
@@ -38,6 +37,14 @@ jobs:
       max-parallel: 3
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
+        # Below is a hacky way to implement a conditional matrix
+        windows-only:
+          - ${{ inputs.windows-only }}
+        exclude:
+          - windows-only: true
+            os: "ubuntu-latest"
+          - windows-only: true
+            os: "macos-latest"
 
     steps:
       - name: Checkout
