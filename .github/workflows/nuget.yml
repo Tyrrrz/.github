@@ -23,6 +23,8 @@ on:
 
 jobs:
   test:
+    # Explicit name is required due to the matrix hack below
+    name: test (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
 
     env:
