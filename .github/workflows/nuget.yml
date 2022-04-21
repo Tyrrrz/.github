@@ -8,7 +8,7 @@ on:
       dotnet-version:
         type: string
         required: true
-      publish-on-failed-tests:
+      deploy-on-failed-tests:
         type: boolean
         required: false
         default: false
@@ -66,9 +66,10 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-  publish:
-    if: ${{ github.event_name == 'push' && github.ref_type == 'tag' && (success() || inputs.publish-on-failed-tests) }}
+  deploy:
+    if: ${{ github.event_name == 'push' && github.ref_type == 'tag' && (success() || inputs.deploy-on-failed-tests) }}
     needs: test
+    # Runs on Windows to be compatible with Windows-only projects without additional conditions
     runs-on: windows-latest
 
     env:
@@ -82,20 +83,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Get release version
-        id: get-version
-        uses: dawidd6/action-get-tag@v1
-
       - name: Install .NET
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: ${{ inputs.dotnet-version }}
 
-      - name: Pack
+      - name: Create packages
         run: dotnet pack --configuration Release
 
-      - name: Deploy
+      - name: Push packages
         run: dotnet nuget push **\*.nupkg -s nuget.org -k ${{ secrets.NUGET_TOKEN }}
+
+  notify:
+    needs: deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Get release version
+        id: get-version
+        uses: dawidd6/action-get-tag@v1
 
       - name: Notify Discord
         if: ${{ env.DISCORD_WEBHOOK }}
