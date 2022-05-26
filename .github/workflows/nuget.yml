@@ -15,7 +15,7 @@ on:
       verbosity:
         type: string
         required: false
-        default: normal
+        default: quiet
 
     secrets:
       CODECOV_TOKEN:
