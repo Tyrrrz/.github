@@ -12,6 +12,10 @@ on:
         type: boolean
         required: false
         default: false
+      verbosity:
+        type: string
+        required: false
+        default: normal
 
     secrets:
       CODECOV_TOKEN:
@@ -61,7 +65,7 @@ jobs:
           dotnet-version: ${{ inputs.dotnet-version }}
 
       - name: Run tests
-        run: dotnet test --configuration Release --logger GitHubActions --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+        run: dotnet test --configuration Release --logger GitHubActions --verbosity ${{ inputs.verbosity }} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
       - name: Upload coverage
         if: ${{ env.CODECOV_TOKEN }}
@@ -90,7 +94,7 @@ jobs:
           dotnet-version: ${{ inputs.dotnet-version }}
 
       - name: Create packages
-        run: dotnet pack --configuration Release
+        run: dotnet pack --configuration Release --verbosity ${{ inputs.verbosity }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
@@ -115,7 +119,7 @@ jobs:
           name: packages
 
       - name: Push packages
-        run: dotnet nuget push **/*.nupkg -s "https://api.nuget.org/v3/index.json" -k ${{ secrets.NUGET_TOKEN }}
+        run: dotnet nuget push **/*.nupkg -s "https://api.nuget.org/v3/index.json" -k ${{ secrets.NUGET_TOKEN }} --verbosity ${{ inputs.verbosity }}
 
   notify:
     needs: deploy
