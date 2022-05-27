@@ -15,7 +15,7 @@ on:
       verbosity:
         type: string
         required: false
-        default: quiet
+        default: minimal
 
     secrets:
       CODECOV_TOKEN:
@@ -65,20 +65,13 @@ jobs:
           dotnet-version: ${{ inputs.dotnet-version }}
 
       - name: Run tests
-        run: dotnet test --configuration Release --logger GitHubActions --verbosity ${{ inputs.verbosity }} --blame-crash -bl --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+        run: dotnet test --configuration Release --logger GitHubActions --verbosity ${{ inputs.verbosity }} --blame-crash --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
       - name: Upload coverage
         if: ${{ env.CODECOV_TOKEN }}
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-
-      - name: Upload build log
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-log
-          path: msbuild.binlog
 
   publish:
     needs: test
