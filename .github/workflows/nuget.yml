@@ -67,6 +67,13 @@ jobs:
       - name: Run tests
         run: dotnet test --configuration Release --logger GitHubActions --verbosity ${{ inputs.verbosity }} --blame-crash --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
+      - name: Upload crash dump
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: testhost-crash-dump
+          path: "**/*.dmp"
+
       - name: Upload coverage
         if: ${{ env.CODECOV_TOKEN }}
         uses: codecov/codecov-action@v3
