@@ -74,6 +74,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Upload build log
+        if: ${{ always() }}
         uses: actions/upload-artifact@v3
         with:
           name: test-log
