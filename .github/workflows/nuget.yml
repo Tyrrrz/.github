@@ -8,6 +8,10 @@ on:
       dotnet-version:
         type: string
         required: true
+      dotnet-test-logger:
+        type: string
+        required: false
+        default: GitHubActions
       deploy-on-failed-tests:
         type: boolean
         required: false
@@ -61,7 +65,7 @@ jobs:
           dotnet-version: ${{ inputs.dotnet-version }}
 
       - name: Run tests
-        run: dotnet test --configuration Release --logger GitHubActions --blame-crash --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+        run: dotnet test --configuration Release --logger ${{ inputs.dotnet-test-logger }} --blame-crash --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
       - name: Upload coverage
         if: ${{ env.CODECOV_TOKEN }}
