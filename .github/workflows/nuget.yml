@@ -12,10 +12,6 @@ on:
         type: boolean
         required: false
         default: false
-      verbosity:
-        type: string
-        required: false
-        default: minimal
 
     secrets:
       CODECOV_TOKEN:
@@ -65,19 +61,13 @@ jobs:
           dotnet-version: ${{ inputs.dotnet-version }}
 
       - name: Run tests
-        run: dotnet test --configuration Release --logger GitHubActions --verbosity ${{ inputs.verbosity }} --blame-crash --diag:logs/log.txt --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+        run: dotnet test --configuration Release --logger GitHubActions --blame-crash --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
       - name: Upload coverage
         if: ${{ env.CODECOV_TOKEN }}
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-
-      - name: Upload diag logs
-        uses: actions/upload-artifact@v3
-        with:
-          name: logs
-          path: "**/log*.txt"
 
   publish:
     needs: test
@@ -100,7 +90,7 @@ jobs:
           dotnet-version: ${{ inputs.dotnet-version }}
 
       - name: Create packages
-        run: dotnet pack --configuration Release --verbosity ${{ inputs.verbosity }}
+        run: dotnet pack --configuration Release
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
@@ -125,7 +115,7 @@ jobs:
           name: packages
 
       - name: Push packages
-        run: dotnet nuget push **/*.nupkg -s "https://api.nuget.org/v3/index.json" -k ${{ secrets.NUGET_TOKEN }} --verbosity ${{ inputs.verbosity }}
+        run: dotnet nuget push **/*.nupkg -s "https://api.nuget.org/v3/index.json" -k ${{ secrets.NUGET_TOKEN }}
 
   notify:
     needs: deploy
