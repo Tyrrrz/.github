@@ -65,13 +65,19 @@ jobs:
           dotnet-version: ${{ inputs.dotnet-version }}
 
       - name: Run tests
-        run: dotnet test --configuration Release --logger GitHubActions --verbosity ${{ inputs.verbosity }} --blame-crash --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+        run: dotnet test --configuration Release --logger GitHubActions --verbosity ${{ inputs.verbosity }} --blame-crash --diag:logs/log.txt --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
       - name: Upload coverage
         if: ${{ env.CODECOV_TOKEN }}
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Upload diag logs
+        uses: actions/upload-artifact@v3
+        with:
+          name: logs
+          path: "**/log*.txt"
 
   publish:
     needs: test
