@@ -29,7 +29,7 @@ Below are some commonly asked questions in regard to the terms of use, and their
     Maybe at some point I will be similarly passionate about some other issue, but for now this obviously takes priority.
     You are welcome to create terms of use for your own projects and fill them as you please, though.
 
-- **Q**: You make everything sound so black and white, have you considered other perspective?
+- **Q**: You make everything sound so black and white, have you considered other perspectives?
 
   - **A**: There are no other perspectives, resisting a genocidal war is as black and white as it gets.
     If you disagree, we have nothing to talk about.
