@@ -6,6 +6,8 @@ This section was inspired by a similar [set of terms implemented by Bank of Geor
 I am Ukrainian myself, so the war waged by Russia has a very direct influence on my life and wellbeing.
 The terms of use reflect that situation — **I don't want the products of my free labor be used by those who undermine my own existence or the sovereignty of the country that I live in**.
 
+---
+
 Below are some commonly asked questions in regard to the terms of use, and their answers.
 
 - **Q**: Why do you try to make your software political?
@@ -19,7 +21,7 @@ Below are some commonly asked questions in regard to the terms of use, and their
 
 - **Q**: Do you realize that these terms are most likely not enforceable?
 
-  - **A**: Yes. I expect it to have about the same level of legal force as code of conduct.
+  - **A**: Yes. I expect them to have about the same level of legal force as code of conduct.
 
 - **Q**: But what about X country or Y issue? Why didn't you add that to your terms of use too?
 
