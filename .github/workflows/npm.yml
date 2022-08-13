@@ -1,0 +1,135 @@
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        type: string
+        required: true
+
+    secrets:
+      CODECOV_TOKEN:
+        required: false
+      NPM_TOKEN:
+        required: true
+      DISCORD_WEBHOOK:
+        required: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      # Secrets can't be referenced in conditionals, but environment variables can.
+      # https://github.com/github/docs/issues/6861#issuecomment-870757186
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Install dependencies
+        run: |
+          if [ -e yarn.lock ]; then
+            yarn install --frozen-lockfile
+          elif [ -e pnpm-lock.yaml ]; then
+            pnpm install --frozen-lockfile
+          else
+            npm ci
+          fi
+
+      - name: Run tests
+        run: npm run test --if-present
+
+      - name: Upload coverage
+        if: ${{ env.CODECOV_TOKEN }}
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Install dependencies
+        run: |
+          if [ -e yarn.lock ]; then
+            yarn install --frozen-lockfile
+          elif [ -e pnpm-lock.yaml ]; then
+            pnpm install --frozen-lockfile
+          else
+            npm ci
+          fi
+
+      - name: Run build
+        run: npm run build --if-present
+
+      - name: Create package
+        run: npm pack
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: package
+          path: "**/*.tgz"
+
+  deploy:
+    if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
+    needs: publish
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ inputs.node-version }}
+          registry-url: https://registry.npmjs.org
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: package
+
+      - name: Push package
+        run: npm publish --access public $(ls *.tgz)
+
+  notify:
+    needs: deploy
+    runs-on: ubuntu-latest
+
+    env:
+      # Secrets can't be referenced in conditionals, but environment variables can.
+      # https://github.com/github/docs/issues/6861#issuecomment-870757186
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+
+    steps:
+      - name: Get release version
+        id: get-version
+        uses: dawidd6/action-get-tag@v1
+
+      - name: Notify Discord
+        if: ${{ env.DISCORD_WEBHOOK }}
+        uses: satak/webrequest-action@v1.2.4
+        with:
+          url: ${{ secrets.DISCORD_WEBHOOK }}
+          method: POST
+          headers: |
+            {
+              "Content-Type": "application/json; charset=UTF-8"
+            }
+          payload: |
+            {
+              "content": "**${{ github.event.repository.name }}** new version released!\nVersion: `${{ steps.get-version.outputs.tag }}`\nChangelog: <https://github.com/${{ github.event.repository.full_name }}/blob/${{ steps.get-version.outputs.tag }}/Changelog.md>"
+            }
