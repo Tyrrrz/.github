@@ -12,10 +12,6 @@ on:
         type: string
         required: false
         default: GitHubActions
-      deploy-on-failed-tests:
-        type: boolean
-        required: false
-        default: false
 
     secrets:
       CODECOV_TOKEN:
@@ -103,7 +99,7 @@ jobs:
           path: "**/*.nupkg"
 
   deploy:
-    if: ${{ github.event_name == 'push' && github.ref_type == 'tag' && (success() || inputs.deploy-on-failed-tests) }}
+    if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
     needs: pack
     runs-on: ubuntu-latest
 
