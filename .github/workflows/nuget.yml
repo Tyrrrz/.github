@@ -73,7 +73,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-  package:
+  pack:
     needs: test
     runs-on: windows-latest
 
@@ -104,7 +104,7 @@ jobs:
 
   deploy:
     if: ${{ github.event_name == 'push' && github.ref_type == 'tag' && (success() || inputs.deploy-on-failed-tests) }}
-    needs: package
+    needs: pack
     runs-on: ubuntu-latest
 
     steps:
