@@ -12,11 +12,6 @@ on:
         type: string
         required: false
         default: GitHubActions
-      # Reusable workflows don't propagate parent environment variables,
-      # so we need this hack.
-      env:
-        type: string
-        required: false
 
     secrets:
       CODECOV_TOKEN:
@@ -24,6 +19,10 @@ on:
       NUGET_TOKEN:
         required: true
       DISCORD_WEBHOOK:
+        required: false
+      # Reusable workflows don't propagate parent environment variables,
+      # so we need this hack.
+      ENVIRONMENT:
         required: false
 
 jobs:
@@ -58,7 +57,7 @@ jobs:
 
     steps:
       - name: Initialize environment
-        run: echo "${{ inputs.env }}" >> $GITHUB_ENV
+        run: echo "${{ secrets.ENVIRONMENT }}" >> $GITHUB_ENV
 
       - name: Checkout
         uses: actions/checkout@v3
@@ -90,7 +89,7 @@ jobs:
 
     steps:
       - name: Initialize environment
-        run: echo "${{ inputs.env }}" >> $GITHUB_ENV
+        run: echo "${{ secrets.ENVIRONMENT }}" >> $GITHUB_ENV
 
       - name: Checkout
         uses: actions/checkout@v3
@@ -116,7 +115,7 @@ jobs:
 
     steps:
       - name: Initialize environment
-        run: echo "${{ inputs.env }}" >> $GITHUB_ENV
+        run: echo "${{ secrets.ENVIRONMENT }}" >> $GITHUB_ENV
 
       - name: Install .NET
         uses: actions/setup-dotnet@v2
@@ -142,7 +141,7 @@ jobs:
 
     steps:
       - name: Initialize environment
-        run: echo "${{ inputs.env }}" >> $GITHUB_ENV
+        run: echo "${{ secrets.ENVIRONMENT }}" >> $GITHUB_ENV
 
       - name: Get release version
         id: get-version
