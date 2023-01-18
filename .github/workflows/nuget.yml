@@ -20,9 +20,9 @@ on:
         required: true
       DISCORD_WEBHOOK:
         required: false
-      # Reusable workflows don't propagate parent environment variables,
-      # so we need this hack.
-      ENVIRONMENT:
+      # Reusable workflows don't propagate parent's execution context,
+      # so we need this hack to pass additional environment variables from the caller.
+      DYNAMIC:
         required: false
 
 jobs:
@@ -57,7 +57,7 @@ jobs:
 
     steps:
       - name: Initialize environment
-        run: echo "${{ secrets.ENVIRONMENT }}" >> $GITHUB_ENV
+        run: echo "${{ secrets.DYNAMIC }}" >> $GITHUB_ENV
 
       - name: Checkout
         uses: actions/checkout@v3
@@ -89,7 +89,7 @@ jobs:
 
     steps:
       - name: Initialize environment
-        run: echo "${{ secrets.ENVIRONMENT }}" >> $GITHUB_ENV
+        run: echo "${{ secrets.DYNAMIC }}" >> $GITHUB_ENV
 
       - name: Checkout
         uses: actions/checkout@v3
@@ -115,7 +115,7 @@ jobs:
 
     steps:
       - name: Initialize environment
-        run: echo "${{ secrets.ENVIRONMENT }}" >> $GITHUB_ENV
+        run: echo "${{ secrets.DYNAMIC }}" >> $GITHUB_ENV
 
       - name: Install .NET
         uses: actions/setup-dotnet@v2
@@ -141,7 +141,7 @@ jobs:
 
     steps:
       - name: Initialize environment
-        run: echo "${{ secrets.ENVIRONMENT }}" >> $GITHUB_ENV
+        run: echo "${{ secrets.DYNAMIC }}" >> $GITHUB_ENV
 
       - name: Get release version
         id: get-version
