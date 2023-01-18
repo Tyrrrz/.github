@@ -12,6 +12,11 @@ on:
         type: string
         required: false
         default: GitHubActions
+      # Reusable workflows don't propagate parent environment variables,
+      # so we need this hack.
+      env:
+        type: string
+        required: false
 
     secrets:
       CODECOV_TOKEN:
@@ -52,6 +57,9 @@ jobs:
             os: "macos-latest"
 
     steps:
+      - name: Initialize environment
+        run: echo "${{ inputs.env }}" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -81,6 +89,9 @@ jobs:
       DOTNET_CLI_TELEMETRY_OPTOUT: true
 
     steps:
+      - name: Initialize environment
+        run: echo "${{ inputs.env }}" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -104,6 +115,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Initialize environment
+        run: echo "${{ inputs.env }}" >> $GITHUB_ENV
+
       - name: Install .NET
         uses: actions/setup-dotnet@v2
         with:
@@ -127,6 +141,9 @@ jobs:
       DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
 
     steps:
+      - name: Initialize environment
+        run: echo "${{ inputs.env }}" >> $GITHUB_ENV
+
       - name: Get release version
         id: get-version
         uses: dawidd6/action-get-tag@v1

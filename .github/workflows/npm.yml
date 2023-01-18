@@ -4,6 +4,11 @@ on:
       node-version:
         type: string
         required: true
+      # Reusable workflows don't propagate parent environment variables,
+      # so we need this hack.
+      env:
+        type: string
+        required: false
 
     secrets:
       CODECOV_TOKEN:
@@ -23,6 +28,9 @@ jobs:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
     steps:
+      - name: Initialize environment
+        run: echo "${{ inputs.env }}" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -55,6 +63,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Initialize environment
+        run: echo "${{ inputs.env }}" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -91,6 +102,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Initialize environment
+        run: echo "${{ inputs.env }}" >> $GITHUB_ENV
+
       - name: Install NodeJS
         uses: actions/setup-node@v3
         with:
@@ -115,6 +129,9 @@ jobs:
       DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
 
     steps:
+      - name: Initialize environment
+        run: echo "${{ inputs.env }}" >> $GITHUB_ENV
+
       - name: Get release version
         id: get-version
         uses: dawidd6/action-get-tag@v1
