@@ -155,7 +155,7 @@ jobs:
           method: POST
           headers: |
             Content-Type: application/json; charset=UTF-8
-          payload: |
+          body: |
             {
               "content": "**${{ github.event.repository.name }}** new version released!\nVersion: `${{ steps.get-version.outputs.tag }}`\nChangelog: <https://github.com/${{ github.event.repository.full_name }}/blob/${{ steps.get-version.outputs.tag }}/Changelog.md>"
             }
