@@ -68,7 +68,7 @@ jobs:
           dotnet-version: ${{ inputs.dotnet-version }}
 
       - name: Run tests
-        run: dotnet test --configuration Release --logger ${{ inputs.dotnet-test-logger }} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+        run: dotnet test --configuration Release --logger "${{ inputs.dotnet-test-logger }}" --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
       - name: Upload coverage
         if: ${{ env.CODECOV_TOKEN }}
