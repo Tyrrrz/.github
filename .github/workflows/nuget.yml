@@ -11,7 +11,7 @@ on:
       dotnet-test-logger:
         type: string
         required: false
-        default: GitHubActions
+        default: GitHubActions;summaryincludePassedTests=true;summaryincludeSkippedTests=true
 
     secrets:
       CODECOV_TOKEN:
