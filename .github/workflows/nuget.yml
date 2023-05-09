@@ -100,7 +100,7 @@ jobs:
           dotnet-version: ${{ inputs.dotnet-version }}
 
       - name: Create packages
-        run: dotnet pack --configuration Release
+        run: dotnet pack --configuration Release -p:ContinuousIntegrationBuild=true
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
