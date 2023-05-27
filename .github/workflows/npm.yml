@@ -20,6 +20,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     env:
       # Secrets can't be referenced in conditionals, but environment variables can.
@@ -60,6 +62,9 @@ jobs:
   pack:
     needs: test
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
 
     steps:
       - name: Initialize environment
@@ -99,6 +104,9 @@ jobs:
     if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
     needs: pack
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
 
     steps:
       - name: Initialize environment
@@ -121,6 +129,8 @@ jobs:
   notify:
     needs: deploy
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     env:
       # Secrets can't be referenced in conditionals, but environment variables can.

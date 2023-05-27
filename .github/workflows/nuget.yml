@@ -30,6 +30,8 @@ jobs:
     # Explicit name is required due to the matrix hack below
     name: test (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
 
     env:
       TERM: xterm
@@ -85,6 +87,9 @@ jobs:
   pack:
     needs: test
     runs-on: windows-latest
+    permissions:
+      actions: write
+      contents: read
 
     env:
       TERM: xterm
@@ -121,6 +126,9 @@ jobs:
     if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
     needs: pack
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
 
     steps:
       - name: Initialize environment
@@ -145,6 +153,8 @@ jobs:
   notify:
     needs: deploy
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     env:
       # Secrets can't be referenced in conditionals, but environment variables can.
