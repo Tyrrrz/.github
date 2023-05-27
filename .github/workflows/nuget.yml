@@ -165,10 +165,6 @@ jobs:
       - name: Initialize environment
         run: echo "${{ secrets.DYNAMIC }}" >> $GITHUB_ENV
 
-      - name: Get release version
-        id: get-version
-        uses: tyrrrz/action-get-tag@v1
-
       - name: Notify Discord
         if: ${{ env.DISCORD_WEBHOOK }}
         uses: tyrrrz/action-http-request@v1
@@ -179,5 +175,5 @@ jobs:
             Content-Type: application/json; charset=UTF-8
           body: |
             {
-              "content": "**${{ github.event.repository.name }}** new version released!\nVersion: `${{ steps.get-version.outputs.tag }}`\nChangelog: <https://github.com/${{ github.event.repository.full_name }}/blob/${{ steps.get-version.outputs.tag }}/Changelog.md>"
+              "content": "**${{ github.event.repository.name }}** new version released!\nVersion: `${{ github.ref_name }}`\nChangelog: <${{ github.event.repository.html_url }}/blob/${{ github.ref_name }}/Changelog.md>"
             }
