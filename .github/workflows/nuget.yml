@@ -76,6 +76,7 @@ jobs:
           --logger "${{ inputs.dotnet-test-logger }}"
           --collect:"XPlat Code Coverage"
           --
+          RunConfiguration.CollectSourceInformation=true
           DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
       - name: Upload coverage
