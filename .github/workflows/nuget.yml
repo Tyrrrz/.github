@@ -5,6 +5,10 @@ on:
         type: boolean
         required: false
         default: false
+      deploy-on-tag-only:
+        type: boolean
+        required: false
+        default: true
       dotnet-version:
         type: string
         required: true
@@ -12,6 +16,10 @@ on:
         type: string
         required: false
         default: GitHubActions;summary.includePassedTests=true;summary.includeSkippedTests=true
+      package-version:
+        type: string
+        required: false
+        default: ""
 
     secrets:
       CODECOV_TOKEN:
@@ -116,6 +124,7 @@ jobs:
           dotnet pack
           --configuration Release
           -p:ContinuousIntegrationBuild=true
+          ${{ inputs.package-version && format('-p:Version={0}', inputs.package-version) || '' }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
@@ -124,7 +133,7 @@ jobs:
           path: "**/*.nupkg"
 
   deploy:
-    if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
+    if: ${{ !inputs.deploy-on-tag-only || github.event_name == 'push' && github.ref_type == 'tag' }}
     needs: pack
     runs-on: ubuntu-latest
     permissions:
@@ -152,6 +161,7 @@ jobs:
           --api-key ${{ secrets.NUGET_TOKEN }}
 
   notify:
+    if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
     needs: deploy
     runs-on: ubuntu-latest
     permissions:

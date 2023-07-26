@@ -1,9 +1,17 @@
 on:
   workflow_call:
     inputs:
+      deploy-on-tag-only:
+        type: boolean
+        required: false
+        default: true
       node-version:
         type: string
         required: true
+      package-version:
+        type: string
+        required: false
+        default: ""
 
     secrets:
       CODECOV_TOKEN:
@@ -91,6 +99,10 @@ jobs:
       - name: Run build
         run: npm run build --if-present
 
+      - name: Override package version
+        if: ${{ inputs.package-version }}
+        run: npm version ${{ inputs.package-version }}
+
       - name: Create package
         run: npm pack
 
@@ -101,7 +113,7 @@ jobs:
           path: "**/*.tgz"
 
   deploy:
-    if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
+    if: ${{ !inputs.deploy-on-tag-only || github.event_name == 'push' && github.ref_type == 'tag' }}
     needs: pack
     runs-on: ubuntu-latest
     permissions:
@@ -127,6 +139,7 @@ jobs:
         run: npm publish --access public $(ls *.tgz)
 
   notify:
+    if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
     needs: deploy
     runs-on: ubuntu-latest
     permissions:
