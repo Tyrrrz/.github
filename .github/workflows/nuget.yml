@@ -5,7 +5,7 @@ on:
         type: boolean
         required: false
         default: false
-      deploy-on-tag-only:
+      deploy-on-tags-only:
         type: boolean
         required: false
         default: true
@@ -133,7 +133,7 @@ jobs:
           path: "**/*.nupkg"
 
   deploy:
-    if: ${{ !inputs.deploy-on-tag-only || github.event_name == 'push' && github.ref_type == 'tag' }}
+    if: ${{ !inputs.deploy-on-tags-only || github.event_name == 'push' && github.ref_type == 'tag' }}
     needs: pack
     runs-on: ubuntu-latest
     permissions:
