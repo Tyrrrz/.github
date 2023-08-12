@@ -1,17 +1,25 @@
 <!--
 
-**Important:**
+**Important**
 
-Please make sure that there is an existing issue that describes the problem solved by your pull request. If there isn't one, consider creating it first.
-An open issue offers a good place to iron out requirements, discuss possible solutions, and ask questions.
+This pull request should be linked to an issue that describes the problem it addresses.
+If there is no corresponding issue yet, please create one first.
 
-Remember to also:
-
-- Keep your pull request focused and as small as possible. If you want to contribute multiple unrelated changes, please create separate pull requests for each of them.
-- Follow the coding style and conventions already established by the project. When in doubt about which style to use, ask in the comments to your pull request.
-- If you want to start a discussion regarding a specific change you've made, add a review comment to your own code. This can be used to highlight something important or to seek further input from others.
+An open issue provides a good place to iron out technical requirements and discuss potential solutions.
+Creating a pull request without prior discussion may very likely lead to wasted effort.
 
 -->
 
-<!-- Please specify the issue addressed by this pull request -->
+<!-- Please specify the issue(s) addressed by this pull request: -->
+
 Closes #ISSUE_NUMBER
+
+<!--
+
+Also keep in mind:
+
+- Pull requests should be as small as possible. Split larger changes into multiple pull requests if needed.
+- Follow the coding style and conventions already established in the project. When in doubt, ask in the comments.
+- You can add review comments to your own code. Use this to highlight something important or to seek further input from reviewers.
+
+-->
