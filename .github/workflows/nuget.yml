@@ -37,37 +37,12 @@ env:
   DOTNET_CLI_TELEMETRY_OPTOUT: true
 
 jobs:
-  build:
-    runs-on: ${{ inputs.windows-only && 'windows-latest' || 'ubuntu-latest' }}
-    permissions:
-      actions: write
-      contents: read
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Install .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: ${{ inputs.dotnet-version }}
-
-      - name: Run build
-        run: dotnet build --configuration Release
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: build
-          path: .
-
   test:
     # Explicit name is required due to the matrix hack below
     name: test (${{ matrix.os }})
-    needs: build
     runs-on: ${{ matrix.os }}
     permissions:
-      actions: read
+      contents: read
 
     strategy:
       fail-fast: false
@@ -89,10 +64,8 @@ jobs:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
     steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: build
+      - name: Checkout
+        uses: actions/checkout@v3
 
       - name: Install .NET
         uses: actions/setup-dotnet@v3
@@ -118,16 +91,15 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   pack:
-    needs: build
+    needs: test
     runs-on: ${{ inputs.windows-only && 'windows-latest' || 'ubuntu-latest' }}
     permissions:
       actions: write
+      contents: read
 
     steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: build
+      - name: Checkout
+        uses: actions/checkout@v3
 
       - name: Install .NET
         uses: actions/setup-dotnet@v3
@@ -151,9 +123,7 @@ jobs:
 
   deploy:
     if: ${{ !inputs.deploy-on-tags-only || github.event_name == 'push' && github.ref_type == 'tag' }}
-    needs:
-      - pack
-      - test
+    needs: pack
     runs-on: ${{ inputs.windows-only && 'windows-latest' || 'ubuntu-latest' }}
     permissions:
       actions: read

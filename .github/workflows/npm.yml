@@ -26,36 +26,8 @@ on:
         required: false
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Install NodeJS
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ inputs.node-version }}
-
-      - name: Install dependencies
-        run: |
-          if [ -e yarn.lock ]; then
-            yarn install --frozen-lockfile
-          elif [ -e pnpm-lock.yaml ]; then
-            pnpm install --frozen-lockfile
-          else
-            npm ci
-          fi
-
-      - name: Run tests
-        run: npm run build --if-present
-
   test:
     runs-on: ubuntu-latest
-    needs: build
     permissions:
       contents: read
 
@@ -93,7 +65,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   pack:
-    needs: build
+    needs: test
     runs-on: ubuntu-latest
     permissions:
       actions: write
@@ -136,9 +108,7 @@ jobs:
 
   deploy:
     if: ${{ !inputs.deploy-on-tags-only || github.event_name == 'push' && github.ref_type == 'tag' }}
-    needs:
-      - pack
-      - test
+    needs: test
     runs-on: ubuntu-latest
     permissions:
       actions: read
