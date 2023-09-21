@@ -34,12 +34,54 @@ on:
         required: false
 
 jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      actions: write
+      contents: read
+
+    env:
+      TERM: xterm
+      DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION: true
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+      DOTNET_NOLOGO: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+    steps:
+      - name: Initialize environment
+        run: echo "${{ secrets.DYNAMIC }}" >> $GITHUB_ENV
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ inputs.dotnet-version }}
+
+      - name: Install dependencies
+        run: dotnet restore --packages packages/
+
+      - name: Run build
+        run: >
+          dotnet build
+          --no-restore
+          --no-incremental
+          --configuration Release
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          path: .
+
   test:
     # Explicit name is required due to the matrix hack below
     name: test (${{ matrix.os }})
+    needs: build
     runs-on: ${{ matrix.os }}
     permissions:
-      contents: read
+      actions: read
 
     env:
       TERM: xterm
@@ -69,8 +111,10 @@ jobs:
       - name: Initialize environment
         run: echo "${{ secrets.DYNAMIC }}" >> $GITHUB_ENV
 
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build
 
       - name: Install .NET
         uses: actions/setup-dotnet@v3
@@ -80,6 +124,8 @@ jobs:
       - name: Run tests
         run: >
           dotnet test
+          --no-build
+          --no-restore
           --configuration Release
           --logger "${{ inputs.dotnet-test-logger }}"
           --collect:"XPlat Code Coverage"
@@ -94,11 +140,10 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   pack:
-    needs: test
+    needs: build
     runs-on: windows-latest
     permissions:
       actions: write
-      contents: read
 
     env:
       TERM: xterm
@@ -111,8 +156,10 @@ jobs:
       - name: Initialize environment
         run: echo "${{ secrets.DYNAMIC }}" >> $GITHUB_ENV
 
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build
 
       - name: Install .NET
         uses: actions/setup-dotnet@v3
@@ -134,11 +181,12 @@ jobs:
 
   deploy:
     if: ${{ !inputs.deploy-on-tags-only || github.event_name == 'push' && github.ref_type == 'tag' }}
-    needs: pack
+    needs:
+      - pack
+      - test
     runs-on: ubuntu-latest
     permissions:
       actions: read
-      contents: read
 
     steps:
       - name: Initialize environment
@@ -164,8 +212,6 @@ jobs:
     if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
     needs: deploy
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
 
     env:
       # Secrets can't be referenced in conditionals, but environment variables can.
