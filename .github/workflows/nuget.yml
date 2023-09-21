@@ -38,7 +38,7 @@ env:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ${{ inputs.windows-only && 'windows-latest' || 'ubuntu-latest' }}
     permissions:
       actions: write
       contents: read
@@ -51,6 +51,12 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ inputs.dotnet-version }}
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.props', '**/*.targets', '**/*.csproj', '**/*.fsproj', '**/*.vbproj') }}
 
       - name: Run build
         run: dotnet build --configuration Release
@@ -99,10 +105,17 @@ jobs:
         with:
           dotnet-version: ${{ inputs.dotnet-version }}
 
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.props', '**/*.targets', '**/*.csproj', '**/*.fsproj', '**/*.vbproj') }}
+
       - name: Run tests
         run: >
           dotnet test
           --no-build
+          --no-restore
           --configuration Release
           --logger "${{ inputs.dotnet-test-logger }}"
           --collect:"XPlat Code Coverage"
@@ -118,7 +131,7 @@ jobs:
 
   pack:
     needs: build
-    runs-on: windows-latest
+    runs-on: ${{ inputs.windows-only && 'windows-latest' || 'ubuntu-latest' }}
     permissions:
       actions: write
 
@@ -133,9 +146,17 @@ jobs:
         with:
           dotnet-version: ${{ inputs.dotnet-version }}
 
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.props', '**/*.targets', '**/*.csproj', '**/*.fsproj', '**/*.vbproj') }}
+
       - name: Create packages
         run: >
           dotnet pack
+          --no-build
+          --no-restore
           --configuration Release
           -p:ContinuousIntegrationBuild=true
           ${{ inputs.package-version && format('-p:Version={0}', inputs.package-version) || '' }}
@@ -151,7 +172,7 @@ jobs:
     needs:
       - pack
       - test
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.windows-only && 'windows-latest' || 'ubuntu-latest' }}
     permissions:
       actions: read
 
@@ -175,7 +196,7 @@ jobs:
   notify:
     if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
     needs: deploy
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.windows-only && 'windows-latest' || 'ubuntu-latest' }}
 
     env:
       # Secrets can't be referenced in conditionals, but environment variables can.

@@ -40,6 +40,12 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
 
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/yarn.lock', '**/pnpm-lock.yaml', '**/package-lock.json') }}
+
       - name: Install dependencies
         run: |
           if [ -e yarn.lock ]; then
@@ -72,6 +78,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ inputs.node-version }}
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/yarn.lock', '**/pnpm-lock.yaml', '**/package-lock.json') }}
 
       - name: Install dependencies
         run: |
@@ -107,6 +119,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ inputs.node-version }}
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/yarn.lock', '**/pnpm-lock.yaml', '**/package-lock.json') }}
 
       - name: Install dependencies
         run: |
