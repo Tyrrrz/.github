@@ -28,10 +28,6 @@ on:
         required: true
       DISCORD_WEBHOOK:
         required: false
-      # Reusable workflows don't propagate parent's execution context,
-      # so we need this hack to pass additional environment variables from the caller.
-      DYNAMIC:
-        required: false
 
 env:
   TERM: xterm
@@ -48,9 +44,6 @@ jobs:
       contents: read
 
     steps:
-      - name: Initialize environment
-        run: echo "${{ secrets.DYNAMIC }}" >> $GITHUB_ENV
-
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -103,9 +96,6 @@ jobs:
             os: "macos-latest"
 
     steps:
-      - name: Initialize environment
-        run: echo "${{ secrets.DYNAMIC }}" >> $GITHUB_ENV
-
       - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
@@ -141,9 +131,6 @@ jobs:
       actions: write
 
     steps:
-      - name: Initialize environment
-        run: echo "${{ secrets.DYNAMIC }}" >> $GITHUB_ENV
-
       - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
@@ -177,9 +164,6 @@ jobs:
       actions: read
 
     steps:
-      - name: Initialize environment
-        run: echo "${{ secrets.DYNAMIC }}" >> $GITHUB_ENV
-
       - name: Install .NET
         uses: actions/setup-dotnet@v3
         with:
@@ -207,9 +191,6 @@ jobs:
       DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
 
     steps:
-      - name: Initialize environment
-        run: echo "${{ secrets.DYNAMIC }}" >> $GITHUB_ENV
-
       - name: Notify Discord
         if: ${{ env.DISCORD_WEBHOOK }}
         uses: tyrrrz/action-http-request@v1

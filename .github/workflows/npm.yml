@@ -32,9 +32,6 @@ jobs:
       contents: read
 
     steps:
-      - name: Initialize environment
-        run: echo "${{ secrets.DYNAMIC }}" >> $GITHUB_ENV
-
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -68,9 +65,6 @@ jobs:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
     steps:
-      - name: Initialize environment
-        run: echo "${{ secrets.DYNAMIC }}" >> $GITHUB_ENV
-
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -106,9 +100,6 @@ jobs:
       contents: read
 
     steps:
-      - name: Initialize environment
-        run: echo "${{ secrets.DYNAMIC }}" >> $GITHUB_ENV
-
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -153,9 +144,6 @@ jobs:
       actions: read
 
     steps:
-      - name: Initialize environment
-        run: echo "${{ secrets.DYNAMIC }}" >> $GITHUB_ENV
-
       - name: Install NodeJS
         uses: actions/setup-node@v3
         with:
@@ -181,9 +169,6 @@ jobs:
       DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
 
     steps:
-      - name: Initialize environment
-        run: echo "${{ secrets.DYNAMIC }}" >> $GITHUB_ENV
-
       - name: Notify Discord
         if: ${{ env.DISCORD_WEBHOOK }}
         uses: tyrrrz/action-http-request@v1
