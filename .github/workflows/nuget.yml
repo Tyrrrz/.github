@@ -75,8 +75,6 @@ jobs:
       - name: Run tests
         run: >
           dotnet test
-          --no-build
-          --no-restore
           --configuration Release
           --logger "${{ inputs.dotnet-test-logger }}"
           --collect:"XPlat Code Coverage"
@@ -109,8 +107,6 @@ jobs:
       - name: Create packages
         run: >
           dotnet pack
-          --no-build
-          --no-restore
           --configuration Release
           -p:ContinuousIntegrationBuild=true
           ${{ inputs.package-version && format('-p:Version={0}', inputs.package-version) || '' }}
