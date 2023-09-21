@@ -52,15 +52,8 @@ jobs:
         with:
           dotnet-version: ${{ inputs.dotnet-version }}
 
-      - name: Install dependencies
-        run: dotnet restore --packages packages/
-
       - name: Run build
-        run: >
-          dotnet build
-          --no-restore
-          --no-incremental
-          --configuration Release
+        run: dotnet build --configuration Release
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
@@ -76,11 +69,6 @@ jobs:
     permissions:
       actions: read
 
-    env:
-      # Secrets can't be referenced in conditionals, but environment variables can.
-      # https://github.com/github/docs/issues/6861#issuecomment-870757186
-      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-
     strategy:
       fail-fast: false
       max-parallel: 3
@@ -94,6 +82,11 @@ jobs:
             os: "ubuntu-latest"
           - windows-only: true
             os: "macos-latest"
+
+    env:
+      # Secrets can't be referenced in conditionals, but environment variables can.
+      # https://github.com/github/docs/issues/6861#issuecomment-870757186
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
     steps:
       - name: Download artifacts
@@ -110,7 +103,6 @@ jobs:
         run: >
           dotnet test
           --no-build
-          --no-restore
           --configuration Release
           --logger "${{ inputs.dotnet-test-logger }}"
           --collect:"XPlat Code Coverage"
