@@ -89,7 +89,6 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   pack:
-    needs: test
     runs-on: ${{ inputs.windows-only && 'windows-latest' || 'ubuntu-latest' }}
     permissions:
       actions: write
@@ -119,7 +118,9 @@ jobs:
 
   deploy:
     if: ${{ !inputs.deploy-on-tags-only || github.event_name == 'push' && github.ref_type == 'tag' }}
-    needs: pack
+    needs:
+      - test
+      - pack
     runs-on: ${{ inputs.windows-only && 'windows-latest' || 'ubuntu-latest' }}
     permissions:
       actions: read
