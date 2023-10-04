@@ -38,10 +38,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # 4.1.0
 
       - name: Install NodeJS
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # 3.8.1
         with:
           node-version: ${{ inputs.node-version }}
 
@@ -60,7 +60,7 @@ jobs:
 
       - name: Upload coverage
         if: ${{ env.CODECOV_TOKEN }}
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@eaaf4bedf32dbdc6b720b63067d99c4d77d6047d # 3.1.4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -72,10 +72,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # 4.1.0
 
       - name: Install NodeJS
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # 3.8.1
         with:
           node-version: ${{ inputs.node-version }}
 
@@ -100,7 +100,7 @@ jobs:
         run: npm pack
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # 3.1.3
         with:
           name: package
           path: "**/*.tgz"
@@ -116,13 +116,13 @@ jobs:
 
     steps:
       - name: Install NodeJS
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # 3.8.1
         with:
           node-version: ${{ inputs.node-version }}
           registry-url: https://registry.npmjs.org
 
       - name: Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # 3.0.2
         with:
           name: package
 
@@ -142,7 +142,7 @@ jobs:
     steps:
       - name: Notify Discord
         if: ${{ env.DISCORD_WEBHOOK }}
-        uses: tyrrrz/action-http-request@v1
+        uses: tyrrrz/action-http-request@28a403e52ea0f292b85a1850aeab1b90abc54be0 # 1.0.0
         with:
           url: ${{ secrets.DISCORD_WEBHOOK }}
           method: POST
