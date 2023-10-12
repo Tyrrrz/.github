@@ -11,7 +11,7 @@ on:
         default: true
       dotnet-version:
         type: string
-        required: true
+        required: false
       dotnet-test-logger:
         type: string
         required: false
@@ -19,7 +19,6 @@ on:
       package-version:
         type: string
         required: false
-        default: ""
 
     secrets:
       CODECOV_TOKEN:
