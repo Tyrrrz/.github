@@ -150,6 +150,6 @@ jobs:
             Content-Type: application/json; charset=UTF-8
           body: |
             {
-              "content": "**${{ github.event.repository.name }}** new version released!\nVersion: `${{ github.ref_name }}`\nChangelog: <${{ github.event.repository.html_url }}/blob/${{ github.ref_name }}/Changelog.md>"
+              "content": "**${{ github.event.repository.name }}** new version released!\nVersion: `${{ github.ref_name }}`\n[Changelog](${{ github.event.repository.html_url }}/blob/${{ github.ref_name }}/Changelog.md)"
             }
           retry-count: 5
