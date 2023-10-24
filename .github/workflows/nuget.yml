@@ -37,12 +37,6 @@ env:
 
 jobs:
   test:
-    # Explicit name is required due to the matrix hack below
-    name: test (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    permissions:
-      contents: read
-
     strategy:
       fail-fast: false
       max-parallel: 3
@@ -56,6 +50,12 @@ jobs:
             os: "ubuntu-latest"
           - windows-only: true
             os: "macos-latest"
+
+    # Explicit name is required due to the matrix hack above
+    name: test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
 
     env:
       # Secrets can't be referenced in conditionals, but environment variables can.
@@ -117,9 +117,11 @@ jobs:
 
   deploy:
     if: ${{ !inputs.deploy-on-tags-only || github.event_name == 'push' && github.ref_type == 'tag' }}
+
     needs:
       - test
       - pack
+
     runs-on: ${{ inputs.windows-only && 'windows-latest' || 'ubuntu-latest' }}
     permissions:
       actions: read

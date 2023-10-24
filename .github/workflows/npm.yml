@@ -107,9 +107,11 @@ jobs:
 
   deploy:
     if: ${{ !inputs.deploy-on-tags-only || github.event_name == 'push' && github.ref_type == 'tag' }}
+
     needs:
       - test
       - pack
+
     runs-on: ubuntu-latest
     permissions:
       actions: read
