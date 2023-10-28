@@ -41,7 +41,10 @@ jobs:
       fail-fast: false
       max-parallel: 3
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
         # Below is a hacky way to implement a conditional matrix
         windows-only:
           - ${{ inputs.windows-only }}
@@ -107,7 +110,7 @@ jobs:
           dotnet pack
           --configuration Release
           -p:ContinuousIntegrationBuild=true
-          ${{ inputs.package-version && format('-p:Version={0}', inputs.package-version) || '' }}
+          ${{ inputs.package-version && format('-p:Version={0}', inputs.package-version) }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # 3.1.3
