@@ -108,9 +108,9 @@ jobs:
       - name: Create packages
         run: >
           dotnet pack
-          --configuration Release
           -p:ContinuousIntegrationBuild=true
           ${{ inputs.package-version && format('-p:Version={0}', inputs.package-version) || '' }}
+          --configuration Release
 
       - name: Upload artifacts
         uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # 3.1.3
