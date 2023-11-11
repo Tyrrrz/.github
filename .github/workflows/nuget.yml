@@ -109,6 +109,9 @@ jobs:
         run: >
           dotnet pack
           -p:ContinuousIntegrationBuild=true
+          -p:PublishRepositoryUrl=true
+          -p:EmbedUntrackedSources=true
+          -p:DebugType=embedded
           ${{ inputs.package-version && format('-p:Version={0}', inputs.package-version) || '' }}
           --configuration Release
 
