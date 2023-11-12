@@ -77,6 +77,7 @@ jobs:
       - name: Run tests
         run: >
           dotnet test
+          -p:CSharpier_Bypass=true
           --configuration Release
           --logger "${{ inputs.dotnet-test-logger }}"
           --collect:"XPlat Code Coverage"
