@@ -1,17 +1,17 @@
 on:
   workflow_call:
     inputs:
-      deploy-on-tags-only:
+      deploy:
         type: boolean
         required: false
-        default: true
+        default: false
+      package-version:
+        type: string
+        required: false
       node-version:
         type: string
         required: false
         default: latest
-      package-version:
-        type: string
-        required: false
 
     secrets:
       CODECOV_TOKEN:
@@ -107,7 +107,7 @@ jobs:
           if-no-files-found: error
 
   deploy:
-    if: ${{ !inputs.deploy-on-tags-only || github.event_name == 'push' && github.ref_type == 'tag' }}
+    if: ${{ inputs.deploy }}
 
     needs:
       - test
@@ -133,7 +133,8 @@ jobs:
         run: npm publish --access public $(ls *.tgz)
 
   notify:
-    if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
+    if: ${{ github.ref_type == 'tag' }}
+
     needs: deploy
     runs-on: ubuntu-latest
 
