@@ -36,10 +36,32 @@ env:
   DOTNET_CLI_TELEMETRY_OPTOUT: true
 
 jobs:
+  format:
+    runs-on: ${{ inputs.windows-only && 'windows-latest' || 'ubuntu-latest' }}
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # 4.1.0
+
+      - name: Install .NET
+        uses: actions/setup-dotnet@3447fd6a9f9e57506b15f895c5b76d3b197dc7c2 # 3.2.0
+        with:
+          dotnet-version: ${{ inputs.dotnet-version }}
+
+      - name: Verify formatting
+        run: |
+          if ! grep -irq CSharpier.MSBuild **/*.csproj; then
+            echo "CSharpier is not installed in any of the project files"
+            exit 0
+          fi
+
+          dotnet build -t:CSharpierFormat --configuration Release
+
   test:
     strategy:
       fail-fast: false
-      max-parallel: 3
       matrix:
         os:
           - ubuntu-latest
@@ -109,6 +131,7 @@ jobs:
       - name: Create packages
         run: >
           dotnet pack
+          -p:CSharpier_Bypass=true
           -p:ContinuousIntegrationBuild=true
           -p:PublishRepositoryUrl=true
           -p:EmbedUntrackedSources=true
@@ -127,6 +150,7 @@ jobs:
     if: ${{ inputs.deploy }}
 
     needs:
+      - format
       - test
       - pack
 

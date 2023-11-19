@@ -26,6 +26,26 @@ on:
         required: false
 
 jobs:
+  format:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # 4.1.0
+
+      - name: Install NodeJS
+        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # 3.8.1
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Verify formatting
+        run: npm run format --if-present
+
+      - name: Perform linting
+        run: npm run lint --if-present
+
   test:
     runs-on: ubuntu-latest
     permissions:
@@ -110,6 +130,7 @@ jobs:
     if: ${{ inputs.deploy }}
 
     needs:
+      - format
       - test
       - pack
 
