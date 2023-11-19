@@ -51,6 +51,7 @@ jobs:
           dotnet-version: ${{ inputs.dotnet-version }}
 
       - name: Verify formatting
+        shell: bash
         run: |
           if ! grep -irq CSharpier.MSBuild **/*.csproj; then
             echo "CSharpier is not installed in any of the project files"
