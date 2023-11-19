@@ -50,15 +50,10 @@ jobs:
         with:
           dotnet-version: ${{ inputs.dotnet-version }}
 
+      # This currently relies on an assumption that the build runs the formatting task implicitly,
+      # which is the case for CSharpier, but not necessarily for other formatting tools.
       - name: Verify formatting
-        shell: bash
-        run: |
-          if ! grep -irq CSharpier.MSBuild **/*.csproj; then
-            echo "CSharpier is not installed in any of the project files"
-            exit 0
-          fi
-
-          dotnet build -t:CSharpierFormat --configuration Release
+        run: dotnet build --configuration Release
 
   test:
     strategy:
