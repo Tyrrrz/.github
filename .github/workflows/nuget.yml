@@ -175,7 +175,7 @@ jobs:
           $(ls *.nupkg)
           --repo ${{ github.event.repository.full_name }}
           --title ${{ github.ref_name }}
-          --notes-from-tag
+          --generate-notes
           --verify-tag
 
       - name: Push packages
