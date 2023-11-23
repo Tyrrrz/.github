@@ -7,11 +7,10 @@ on:
         default: false
       deploy:
         type: boolean
-        required: false
-        default: false
+        required: true
       package-version:
         type: string
-        required: false
+        required: true
       dotnet-version:
         type: string
         required: false
@@ -127,12 +126,12 @@ jobs:
       - name: Create packages
         run: >
           dotnet pack
+          -p:Version=${{ inputs.package-version }}
           -p:CSharpier_Bypass=true
           -p:ContinuousIntegrationBuild=true
           -p:PublishRepositoryUrl=true
           -p:EmbedUntrackedSources=true
           -p:DebugType=embedded
-          ${{ inputs.package-version && format('-p:Version={0}', inputs.package-version) || '' }}
           --configuration Release
 
       - name: Upload artifacts
@@ -150,9 +149,10 @@ jobs:
       - test
       - pack
 
-    runs-on: ${{ inputs.windows-only && 'windows-latest' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       actions: read
+      contents: write
 
     steps:
       - name: Install .NET
@@ -165,6 +165,19 @@ jobs:
         with:
           name: packages
 
+      - name: Create release
+        # Untagged deployments (e.g. from workflow_dispatch) don't need a full release
+        if: ${{ github.ref_type == 'tag' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >
+          gh release create ${{ github.ref_name }}
+          $(ls *.nupkg)
+          --repo ${{ github.event.repository.full_name }}
+          --title ${{ github.ref_name }}
+          --notes-from-tag
+          --verify-tag
+
       - name: Push packages
         run: >
           dotnet nuget push **/*.nupkg
@@ -172,10 +185,8 @@ jobs:
           --api-key ${{ secrets.NUGET_TOKEN }}
 
   notify:
-    if: ${{ github.ref_type == 'tag' }}
-
     needs: deploy
-    runs-on: ${{ inputs.windows-only && 'windows-latest' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
 
     env:
       # Secrets can't be referenced in conditionals, but environment variables can.
@@ -193,6 +204,6 @@ jobs:
             Content-Type: application/json; charset=UTF-8
           body: |
             {
-              "content": "**${{ github.event.repository.name }}** v${{ github.ref_name }} has been released!\n🔗 [Changelog](<${{ github.event.repository.html_url }}/blob/${{ github.ref_name }}/Changelog.md>)"
+              "content": "**${{ github.event.repository.name }}** v${{ inputs.package-version }} has been released!"
             }
           retry-count: 5

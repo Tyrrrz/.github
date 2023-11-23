@@ -3,11 +3,10 @@ on:
     inputs:
       deploy:
         type: boolean
-        required: false
-        default: false
+        required: true
       package-version:
         type: string
-        required: false
+        required: true
       node-version:
         type: string
         required: false
@@ -112,8 +111,7 @@ jobs:
       - name: Run build
         run: npm run build --if-present
 
-      - name: Override package version
-        if: ${{ inputs.package-version }}
+      - name: Set package version
         run: npm version ${{ inputs.package-version }}
 
       - name: Create package
@@ -137,6 +135,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       actions: read
+      contents: write
 
     steps:
       - name: Install NodeJS
@@ -148,14 +147,25 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # 3.0.2
         with:
-          name: package
+          name: packages
 
-      - name: Push package
+      - name: Create release
+        # Untagged deployments (e.g. from workflow_dispatch) don't need a full release
+        if: ${{ github.ref_type == 'tag' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >
+          gh release create ${{ github.ref_name }}
+          $(ls *.tgz)
+          --repo ${{ github.event.repository.full_name }}
+          --title ${{ github.ref_name }}
+          --notes-from-tag
+          --verify-tag
+
+      - name: Push packages
         run: npm publish --access public $(ls *.tgz)
 
   notify:
-    if: ${{ github.ref_type == 'tag' }}
-
     needs: deploy
     runs-on: ubuntu-latest
 
@@ -175,6 +185,6 @@ jobs:
             Content-Type: application/json; charset=UTF-8
           body: |
             {
-              "content": "**${{ github.event.repository.name }}** v${{ github.ref_name }} has been released!\n🔗 [Changelog](<${{ github.event.repository.html_url }}/blob/${{ github.ref_name }}/Changelog.md>)"
+              "content": "**${{ github.event.repository.name }}** v${{ inputs.package-version }} has been released!"
             }
           retry-count: 5
