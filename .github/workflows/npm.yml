@@ -27,6 +27,8 @@ on:
 jobs:
   format:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+
     permissions:
       contents: read
 
@@ -47,6 +49,8 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+
     permissions:
       contents: read
 
@@ -85,6 +89,8 @@ jobs:
 
   pack:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+
     permissions:
       actions: write
       contents: read
@@ -133,6 +139,8 @@ jobs:
       - pack
 
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+
     permissions:
       actions: read
       contents: write
@@ -168,6 +176,7 @@ jobs:
   notify:
     needs: deploy
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     env:
       # Secrets can't be referenced in conditionals, but environment variables can.

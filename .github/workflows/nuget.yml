@@ -37,6 +37,8 @@ env:
 jobs:
   format:
     runs-on: ${{ inputs.windows-only && 'windows-latest' || 'ubuntu-latest' }}
+    timeout-minutes: 10
+
     permissions:
       contents: read
 
@@ -74,6 +76,8 @@ jobs:
     # Explicit name is required due to the matrix hack above
     name: test (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+
     permissions:
       contents: read
 
@@ -110,6 +114,8 @@ jobs:
 
   pack:
     runs-on: ${{ inputs.windows-only && 'windows-latest' || 'ubuntu-latest' }}
+    timeout-minutes: 10
+
     permissions:
       actions: write
       contents: read
@@ -149,7 +155,9 @@ jobs:
       - test
       - pack
 
+    timeout-minutes: 10
     runs-on: ubuntu-latest
+
     permissions:
       actions: read
       contents: write
@@ -187,6 +195,7 @@ jobs:
   notify:
     needs: deploy
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     env:
       # Secrets can't be referenced in conditionals, but environment variables can.
