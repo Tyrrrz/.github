@@ -180,7 +180,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >
           gh release create ${{ github.ref_name }}
-          $(ls *.nupkg)
+          $(find . -type f -wholename **/*.nupkg -exec echo {} \; | tr '\n' ' ')
           --repo ${{ github.event.repository.full_name }}
           --title ${{ github.ref_name }}
           --generate-notes

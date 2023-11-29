@@ -164,14 +164,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >
           gh release create ${{ github.ref_name }}
-          $(ls *.tgz)
+          $(find . -type f -wholename **/*.tgz -exec echo {} \; | tr '\n' ' ')
           --repo ${{ github.event.repository.full_name }}
           --title ${{ github.ref_name }}
           --generate-notes
           --verify-tag
 
       - name: Push packages
-        run: npm publish --access public $(ls *.tgz)
+        run: npm publish --access public $(find . -type f -wholename **/*.tgz -exec echo {} \; | tr '\n' ' ')
 
   notify:
     needs: deploy
