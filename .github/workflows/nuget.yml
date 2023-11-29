@@ -213,6 +213,6 @@ jobs:
             Content-Type: application/json; charset=UTF-8
           body: |
             {
-              "content": "**${{ github.event.repository.name }}** v${{ inputs.package-version }} has been released!"
+              "content": "[**${{ github.event.repository.name }}**](<${{ github.event.repository.html_url }}>) v${{ inputs.package-version }} has been released!"
             }
           retry-count: 5
