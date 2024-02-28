@@ -64,17 +64,11 @@ jobs:
           - ubuntu-latest
           - windows-latest
           - macos-latest
-        # Below is a hacky way to implement a conditional matrix
-        windows-only:
-          - ${{ inputs.windows-only }}
         exclude:
-          - windows-only: true
-            os: "ubuntu-latest"
-          - windows-only: true
-            os: "macos-latest"
+          # Exclude non-Windows jobs if necessary
+          - os: ${{ inputs.windows-only && 'ubuntu-latest' }}
+          - os: ${{ inputs.windows-only && 'macos-latest' }}
 
-    # Explicit name is required due to the matrix hack above
-    name: test (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
 
