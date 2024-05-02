@@ -34,10 +34,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # 4.1.0
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: Install NodeJS
-        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # 3.8.1
+        uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8 # v4.0.1
         with:
           node-version: ${{ inputs.node-version }}
 
@@ -61,10 +61,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # 4.1.0
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: Install NodeJS
-        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # 3.8.1
+        uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8 # v4.0.1
         with:
           node-version: ${{ inputs.node-version }}
 
@@ -83,7 +83,7 @@ jobs:
 
       - name: Upload coverage
         if: ${{ env.CODECOV_TOKEN }}
-        uses: codecov/codecov-action@eaaf4bedf32dbdc6b720b63067d99c4d77d6047d # 3.1.4
+        uses: codecov/codecov-action@f30e4959ba63075080d4f7f90cacc18d9f3fafd7 # v4.0.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -97,10 +97,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # 4.1.0
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: Install NodeJS
-        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # 3.8.1
+        uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8 # v4.0.1
         with:
           node-version: ${{ inputs.node-version }}
 
@@ -147,7 +147,7 @@ jobs:
 
     steps:
       - name: Install NodeJS
-        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # 3.8.1
+        uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8 # v4.0.1
         with:
           node-version: ${{ inputs.node-version }}
           registry-url: https://registry.npmjs.org
