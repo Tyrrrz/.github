@@ -118,7 +118,7 @@ jobs:
         run: npm run build --if-present
 
       - name: Set package version
-        run: npm version ${{ inputs.package-version }}
+        run: npm version ${{ inputs.package-version }} --allow-same-version
 
       - name: Create package
         run: npm pack
