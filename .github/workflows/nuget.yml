@@ -5,6 +5,10 @@ on:
         type: boolean
         required: false
         default: false
+      skip-tests:
+        type: boolean
+        required: false
+        default: false
       deploy:
         type: boolean
         required: true
@@ -90,6 +94,8 @@ jobs:
           dotnet-version: ${{ inputs.dotnet-version }}
 
       - name: Run tests
+        # Skip tests here instead of the whole job to ensure the dependant jobs still run
+        if: ${{ !inputs.skip-tests }}
         run: >
           dotnet test
           -p:CSharpier_Bypass=true

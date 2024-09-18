@@ -1,6 +1,10 @@
 on:
   workflow_call:
     inputs:
+      skip-tests:
+        type: boolean
+        required: false
+        default: false
       deploy:
         type: boolean
         required: true
@@ -79,6 +83,8 @@ jobs:
           fi
 
       - name: Run tests
+        # Skip tests here instead of the whole job to ensure the dependant jobs still run
+        if: ${{ !inputs.skip-tests }}
         run: npm run test --if-present
 
       - name: Upload coverage
