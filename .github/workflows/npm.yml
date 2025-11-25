@@ -45,6 +45,9 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Verify formatting
         run: npm run format --if-present
 
@@ -72,10 +75,13 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Install dependencies
         run: |
           if [ -e yarn.lock ]; then
-            yarn install --frozen-lockfile
+            yarn install --immutable
           elif [ -e pnpm-lock.yaml ]; then
             pnpm install --frozen-lockfile
           else
@@ -110,10 +116,13 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Install dependencies
         run: |
           if [ -e yarn.lock ]; then
-            yarn install --frozen-lockfile
+            yarn install --immutable
           elif [ -e pnpm-lock.yaml ]; then
             pnpm install --frozen-lockfile
           else
@@ -157,6 +166,9 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
           registry-url: https://registry.npmjs.org
+
+      - name: Enable Corepack
+        run: corepack enable
 
       - name: Download packages
         uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
