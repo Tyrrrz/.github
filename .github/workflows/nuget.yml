@@ -213,7 +213,7 @@ jobs:
         id: favicon
         run: |
           if [ -f favicon.png ]; then
-            echo "url=https://raw.githubusercontent.com/${{ github.event.repository.full_name }}/${{ github.ref_name }}/favicon.png" >> "$GITHUB_OUTPUT"
+            echo "url=https://raw.githubusercontent.com/${{ github.event.repository.full_name }}/${{ github.sha }}/favicon.png" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Notify Discord
