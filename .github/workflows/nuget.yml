@@ -197,12 +197,25 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
+    permissions:
+      contents: read
+
     env:
       # Secrets can't be referenced in conditionals, but environment variables can.
       # https://github.com/github/docs/issues/6861#issuecomment-870757186
       DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Get favicon URL
+        id: favicon
+        run: |
+          if [ -f favicon.png ]; then
+            echo "url=https://raw.githubusercontent.com/${{ github.event.repository.full_name }}/${{ github.sha }}/favicon.png" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Notify Discord
         if: ${{ env.DISCORD_WEBHOOK }}
         uses: tyrrrz/action-http-request@25f132e48dea89c0f6b7955398270b506e1d51cb # 1.1.4
@@ -213,6 +226,7 @@ jobs:
             Content-Type: application/json; charset=UTF-8
           body: |
             {
+              ${{ steps.favicon.outputs.url && format('"avatar_url": "{0}",', steps.favicon.outputs.url) || '' }}
               "content": "[**${{ github.event.repository.name }}**](<${{ github.event.repository.html_url }}>) v${{ inputs.package-version }} has been released!"
             }
           retry-count: 5
