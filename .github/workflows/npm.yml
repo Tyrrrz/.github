@@ -95,7 +95,7 @@ jobs:
 
       - name: Upload coverage
         if: ${{ env.CODECOV_TOKEN }}
-        uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # v6.0.0
+        uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # v6.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -217,7 +217,7 @@ jobs:
 
       - name: Notify Discord
         if: ${{ env.DISCORD_WEBHOOK }}
-        uses: tyrrrz/action-http-request@25f132e48dea89c0f6b7955398270b506e1d51cb # 1.1.4
+        uses: tyrrrz/action-http-request@110f1a0f0f7e91c3b2de349539249f4573c243fa # 1.1.5
         with:
           url: ${{ secrets.DISCORD_WEBHOOK }}
           method: POST
